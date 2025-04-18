@@ -1,0 +1,41 @@
+name: rp2350 Gameboy Cartridge Devcontainer CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  release:
+    types: [published]
+
+jobs:
+  sdk_container:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build SDK
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          load: true
+      - name: Log into Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - name: Extract SDK metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: shilga/raspberry-pi-pico-gbdk-docker
+      - name: Push SDK image
+        if: github.event_name == 'release' && github.event.action == 'published'
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
