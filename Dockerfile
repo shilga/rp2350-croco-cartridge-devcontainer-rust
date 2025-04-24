@@ -26,6 +26,7 @@ RUN apk update && \
             binutils \
             libbz2
 
+ENV RUSTUP_HOME="/usr/local/rustup"
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain=1.81.0 -y
 
 RUN . "$HOME/.cargo/env" && \
