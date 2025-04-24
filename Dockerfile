@@ -23,12 +23,16 @@ RUN apk update && \
             libpng-dev \
             zlib-static \
             gdb-multiarch \
-            binutils
+            binutils \
+            libbz2
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain=1.81.0 -y
 
 RUN . "$HOME/.cargo/env" && \
-    rustup target add thumbv8m.main-none-eabihf
+    rustup target add thumbv8m.main-none-eabihf && \
+    cargo install --version 0.3.6 cargo-binutils && \
+    rustup component add llvm-tools && \
+    RUSTFLAGS="-Ctarget-feature=-crt-static" cargo install --version 0.37.24 cargo-make
 
 # Add .cargo/bin to PATH
 ENV PATH="/root/.cargo/bin:${PATH}"
