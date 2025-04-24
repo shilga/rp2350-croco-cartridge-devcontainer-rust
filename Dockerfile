@@ -30,6 +30,9 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --defau
 RUN . "$HOME/.cargo/env" && \
     rustup target add thumbv8m.main-none-eabihf
 
+# Add .cargo/bin to PATH
+ENV PATH="/root/.cargo/bin:${PATH}"
+
 # Raspberry Pi Pico SDK
 ARG SDK_PATH=/usr/share/pico_sdk
 RUN git clone --depth 1 --branch 2.1.1 https://github.com/raspberrypi/pico-sdk $SDK_PATH && \
